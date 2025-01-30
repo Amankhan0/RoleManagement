@@ -3,6 +3,7 @@ import { RootState } from "../../../store";
 import { useDispatch, useSelector } from "react-redux";
 import { errorInputClass, normalInputClass } from "../../../constants/constants";
 import { setApiJson } from "../../../features/apireducer";
+import cn from "../../../utils/class-names";
 
 interface props {
     options: string[]; // imp
@@ -34,7 +35,7 @@ const CustomSelect = ({ title, className, onChange, name, titleClass, options, e
     return (
         <div>
             <p className={`rizzui-input-label block text-sm mb-1.5 font-medium ${titleClass}`}>{title}</p>
-            <select value={ApiReducer?.apiJson?.[name]+""} onChange={onChange ? onChange : (e) => onTextChange(e.target.value)} className={`${ApiReducer?.apiJsonError?.[name] ? errorInputClass : normalInputClass} ${className}`}>
+            <select value={ApiReducer?.apiJson?.[name]+""} onChange={onChange ? onChange : (e) => onTextChange(e.target.value)} className={cn(`${ApiReducer?.apiJsonError?.[name] ? errorInputClass : normalInputClass} ${className}`)}>
                 {
                     options?.map((ele, i) => {
                         return (
@@ -43,7 +44,7 @@ const CustomSelect = ({ title, className, onChange, name, titleClass, options, e
                     })
                 }
             </select>
-            <div className={`text-red text-[13px] mt-0.5 ${errorLabelClass}`}>{ApiReducer?.apiJsonError?.[name]}</div>
+            <div className={cn(`text-red text-[13px] mt-0.5 ${errorLabelClass}`)}>{ApiReducer?.apiJsonError?.[name]}</div>
         </div>
     );
 };

@@ -21,8 +21,8 @@ const CustomButton = ({ title, className, onClick, iconClass, titleClass, icon, 
         type !== 'loader' ?
             <div onClick={onClick} className={cn(`${buttonClass} ${className}`)}>
                 <div className="flex gap-2 items-center">
-                    {icon && <i className={`text-white ${iconClass}`}>{icon}</i>}
-                    <p className={`text-white ${titleClass}`}>{title}</p>
+                    {icon && <i className={cn(`text-white ${iconClass}`)}>{icon}</i>}
+                    <p className={cn(`text-white ${titleClass}`)}>{title}</p>
                 </div>
             </div>
             :

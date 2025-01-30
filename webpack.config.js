@@ -5,10 +5,10 @@ module.exports = {
   mode: "development",
   entry: "./src/index.tsx",
   output: {
-    publicPath: "http://localhost:3001/",
+    publicPath: "http://localhost:3002/",
   },
   devServer: {
-    port: 3001,
+    port: 3002,
     historyApiFallback: true,
     headers: {
       "Access-Control-Allow-Origin": "*",

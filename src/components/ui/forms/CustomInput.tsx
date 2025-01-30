@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { errorInputClass, normalInputClass } from "../../../constants/constants";
 import { setApiJson } from "../../../features/apireducer";
+import cn from "../../../utils/class-names";
 
 interface props {
   name: string; // imp
@@ -32,9 +33,9 @@ const CustomInput = ({ title, className, name, placeholder, onChange, id, style,
 
   return (
     <div>
-      <p className={`rizzui-input-label block text-sm mb-1.5 font-medium ${titleClass}`}>{title}</p>
-      <input onChange={onChange ? onChange : (e) => onTextChange(e.target.value)} className={`${ApiReducer?.apiJsonError?.[name] ? errorInputClass : normalInputClass} ${className}`} name={name} placeholder={placeholder} value={ApiReducer?.apiJson?.[name]? ApiReducer?.apiJson?.[name]+"":""} id={id} style={style} type={type} />
-      <div className={`text-red text-[13px] mt-0.5 ${errorLabelClass}`}>{ApiReducer?.apiJsonError?.[name]}</div>
+      <p className={`text-sm mb-1.5 font-medium ${titleClass}`}>{title}</p>
+      <input onChange={onChange ? onChange : (e) => onTextChange(e.target.value)} className={cn(`${ApiReducer?.apiJsonError?.[name] ? errorInputClass : normalInputClass} ${className}`)} name={name} placeholder={placeholder} value={ApiReducer?.apiJson?.[name]? ApiReducer?.apiJson?.[name]+"":""} id={id} style={style} type={type} />
+      <div className={cn(`text-red text-[13px] mt-0.5 ${errorLabelClass}`)}>{ApiReducer?.apiJsonError?.[name]}</div>
     </div>
   );
 };

@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import apireducer from './features/apireducer';
-import ApplicationManagement from './features/applicationmanagement';
+import rolemanagementreducer from './features/rolemanagementreducer';
+import paginationreducer from './features/paginationreducer';
 
 export const store = configureStore({
     reducer: {
-        ApplicationManagementReducer: ApplicationManagement,
+        RoleManagementReducer: rolemanagementreducer,
         ApiReducer:apireducer,
+        PaginationReducer:paginationreducer
     },
 });
 

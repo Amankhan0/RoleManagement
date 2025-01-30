@@ -1,11 +1,14 @@
 import React from 'react';
-import ApplicationManagement from './views/applicationmanagement/applicationmanagement';
+import { Route, Routes } from 'react-router-dom';
+import RoleManagement from './views/rolemanagement/rolemanagement';
+import AddRole from './views/rolemanagement/AddRole/AddRole';
 
 function App() {
   return (
-    <div>
-      <ApplicationManagement />
-    </div>
+    <Routes>
+      <Route path="/" element={<RoleManagement />} />
+      <Route path="/addrole/:id" element={<AddRole />} />
+    </Routes>
   );
 }
 
