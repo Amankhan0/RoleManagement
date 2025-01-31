@@ -1,17 +1,15 @@
-import { userIcon, usersIcon } from "../../../components/icons/icons";
-import CustomInput from "../../../components/ui/forms/CustomInput";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store";
-import { setApiJson } from "../../../features/apireducer";
-import { Active, clientPanel, InActive, searchApplicationSidebar, searchBodyData, superAdminPanel } from "../../../constants/constants";
+import { Active, InActive, searchApplicationSidebar, searchBodyData } from "../../../constants/constants";
 import { ObjIsEmpty } from "../../../utils/utils";
 import { ApiHit } from "../../../constants/Apihit";
-import { BodyDataApiResponse, BodyDataItem, roleApiResponse, roleComponentPermission, roleDataArr, rolePermission, setActiveScreenIndex, setRoleSideBar, setBodyData, setSingleRoleData, sidebarItem } from "../../../features/rolemanagementreducer";
+import { BodyDataApiResponse, roleComponentPermission, setRoleSideBar, setBodyData, setSingleRoleData, sidebarItem, setActiveScreenIndex } from "../../../features/rolemanagementreducer";
+import toast from "react-hot-toast";
+import CustomSwitch from "../../../components/ui/forms/CustomSwitch";
 
 const RoleSidebar = () => {
 
-    const ApiReducer = useSelector((state: RootState) => state.ApiReducer);
     const RoleManagementReducer = useSelector((state: RootState) => state.RoleManagementReducer);
 
     const dispatch = useDispatch()
@@ -39,44 +37,72 @@ const RoleSidebar = () => {
         })
     }
 
-    const onClickSideBarMenu = (i: number) => {
-        dispatch(setActiveScreenIndex(i + 1))
-        dispatch(setBodyData({}))
+    const onClickSidebarMenu = async (ele: sidebarItem, index: number, type: boolean,) => {
+        dispatch(setActiveScreenIndex(index+1))
+        const result = await ApiHit({ page: 1, limit: 10, search: { usedById: ele?._id } }, searchBodyData);
+        const bodyData = result as BodyDataApiResponse;
+        if (result?.statusCode === 200) {
+            dispatch(setBodyData(bodyData));
+        }
     }
 
-    const onCheckPermission = (screenName: string, id: string, index: number,type:boolean) => {
-        ApiHit({ page: 1, limit: 10, search: { usedById: id } }, searchBodyData)
-            .then((result) => {
-                if (result.statusCode !== 200) return;
-                const bodyData = result as BodyDataApiResponse;
-                dispatch(setActiveScreenIndex(index));
-                dispatch(setBodyData(bodyData));
-                const oldData = RoleManagementReducer?.singleRoleData;
-                if (!oldData?.data?.[0]) return;
-                const role = oldData.data[0];
-                const componentPermissions: roleComponentPermission[] = result?.data?.map((item: BodyDataItem) => ({
-                    componentName: item.componentName || '',
-                    status: item.status || '',
-                    hits: item.hits || '',
-                    permissions: item.permissions || { write: false, read: false, delete: false }
-                })) || [];
-                let updatedPermissions = role.permissions || [];
-                const existingPermissionIndex = updatedPermissions.findIndex(p => p.screenName === screenName);
-                if (existingPermissionIndex !== -1) {
-                    updatedPermissions = updatedPermissions.map((p, idx) =>
-                        idx === existingPermissionIndex ? { ...p, status: p.status === Active ? type?Active:InActive : type?InActive:Active } : p
-                    );
-                } else {
-                    updatedPermissions = [
-                        ...updatedPermissions,
-                        { screenName, status: type?InActive:Active, componentPermissions }
-                    ];
+    const onCheckPermission = async (ele: sidebarItem, index: number, type: boolean) => {
+        try {
+            const result = await ApiHit({ page: 1, limit: 10, search: { usedById: ele?._id } }, searchBodyData);
+            const bodyData = result as BodyDataApiResponse;
+            dispatch(setBodyData(bodyData));
+            if (result?.statusCode === 200) {
+                const roleData = RoleManagementReducer?.singleRoleData;
+                if (roleData.data) {
+                    const permissions = roleData?.data?.[0]?.permission || [];
+                    const findIndex = permissions.findIndex(p => p.applicationSidebarDataId?.screenName === ele.screenName);
+                    if (findIndex < 0) {
+                        givePermission(ele, index, type, bodyData);
+                    } else {
+                        const permission = { ...permissions[findIndex] };
+                        permission.status = permission?.status === Active ? InActive : Active;
+
+                        const updatedPermissions = [
+                            ...permissions.slice(0, findIndex),
+                            permission,
+                            ...permissions.slice(findIndex + 1),
+                        ];
+
+                        const updatedRoleData = { ...roleData.data[0], permission: updatedPermissions };
+                        dispatch(setSingleRoleData({ ...roleData, data: [updatedRoleData] }));
+                    }
                 }
-                const updatedRole: roleDataArr = { ...role, permissions: updatedPermissions };
-                const finalData: roleApiResponse = { ...oldData, data: [updatedRole] };
-                dispatch(setSingleRoleData(finalData));
-            });
+            }
+        } catch (error) {
+            console.log(error);
+        }
     };
+
+    const givePermission = async (ele: sidebarItem, index: number, type: boolean, bodyData: BodyDataApiResponse) => {
+        const permission = bodyData?.data?.map((element) => ({
+            bodyDataId: element,
+            bodyDataPermission: { read: false, write: false, delete: false },
+            applicationSidebarDataId: element?.usedById,
+            status: Active,
+        })) || [];
+
+        if (permission.length > 0) {
+            const roleData = RoleManagementReducer?.singleRoleData;
+            if (roleData.data) {
+                const updated = roleData?.data?.[0]?.permission?.length
+                    ? { ...roleData.data[0], permission: [...roleData.data[0].permission, ...permission] }
+                    : { ...roleData.data[0], permission };
+
+                if (updated) {
+                    dispatch(setSingleRoleData({ ...roleData, data: [updated] }));
+                } else {
+                    console.error("Failed to update role data: updated is undefined.");
+                }
+            }
+        } else {
+            toast.error(`Component not found`);
+        }
+    };    
 
     console.log(RoleManagementReducer);
     
@@ -93,8 +119,8 @@ const RoleSidebar = () => {
                         let isChecked = false;
                         if (oldData?.data?.[0]) {
                             const role = oldData.data[0];
-                            if (role.permissions) {
-                                const existingPermission = role.permissions.find(p => p.screenName === ele.screenName);
+                            if (role.permission) {
+                                const existingPermission = role.permission.find(p => p.applicationSidebarDataId?.screenName === ele.screenName);
                                 if (existingPermission?.status === Active) {
                                     isChecked = true;
                                 }
@@ -102,11 +128,11 @@ const RoleSidebar = () => {
                         }
                         return (
                             ele.status === Active &&
-                            <div key={i} className="flex gap-2 border-b border-b-darkGray items-center p-3">
-                                <input onChange={() => onCheckPermission(ele?.screenName, ele._id,i,false)} checked={isChecked} type="checkbox" />
-                                <div key={i} onClick={() => onCheckPermission(ele?.screenName, ele._id,i,true)} className={`cursor-pointer text-sm ${RoleManagementReducer?.activeScreenIndex === i + 1 ? 'text-primary' : ''}`}>
+                            <div key={i} className="flex border-b border-b-darkGray items-center p-3 justify-between">
+                                <div key={i} onClick={() => onClickSidebarMenu(ele, i, true)} className={`cursor-pointer text-sm ${RoleManagementReducer?.activeScreenIndex === i + 1 ? 'text-primary' : ''}`}>
                                     <p>{ele?.screenName}</p>
                                 </div>
+                                <CustomSwitch className="cursor-pointer" checked={isChecked} onSwitch={() => onCheckPermission(ele, i, false)} name="radio"/>
                             </div>
                         )
                     })

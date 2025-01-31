@@ -79,7 +79,8 @@ const RoleManagement = () => {
             var json = {
                 roleName: ApiReducer?.apiJson?.roleName,
                 roleType: ApiReducer?.apiJson?.roleType,
-                status: InActive
+                status: InActive,
+                permission:[]
             }
             ApiHit(json, addRole).then(res => {
                 if (res?.statusCode === 201) {

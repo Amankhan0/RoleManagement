@@ -1,6 +1,6 @@
 
-export const Base = 'http://192.168.250.23:8081/'
-export const BaseUrl = 'http://192.168.250.23:8080/'
+export const Base = 'http://192.168.1.40:8081/'
+export const BaseUrl = 'http://192.168.1.40:8080/'
 
 const applicationManagement = 'applicationManagement/'
 const userservice = 'userservice/'

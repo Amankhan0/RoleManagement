@@ -42,10 +42,11 @@ const AddRole = () => {
 
     const onClickSavePanel = () => {
         var id = RoleManagementReducer?.singleRoleData?.data?.[0]?._id
-        var permissions = RoleManagementReducer?.singleRoleData?.data?.[0]?.permissions
+        var permission = RoleManagementReducer?.singleRoleData?.data?.[0]?.permission
+        console.log('RoleManagementReducer?.singleRoleData?.data?.[0]?.permission',RoleManagementReducer?.singleRoleData?.data?.[0]?.permission);
         var json = {
             _id: id,
-            permissions: permissions
+            permission: permission
         }
         ApiHit(json, updateRole).then(res => {
             const roleData = res as roleApiResponse;
@@ -84,7 +85,7 @@ const AddRole = () => {
                     </div>
                 </div>
                 <div>
-                    <CustomButton icon={saveIcon} className={`${!RoleManagementReducer?.singleRoleData?.data?.[0]?.permissions && 'bg-lightGray'}`} titleClass={`${!RoleManagementReducer?.singleRoleData?.data?.[0]?.permissions &&'text-black'}`} iconClass={`${!RoleManagementReducer?.singleRoleData?.data?.[0]?.permissions &&'text-black'}`}  onClick={() => RoleManagementReducer?.singleRoleData?.data?.[0]?.permissions ? onClickSavePanel() : console.log('dfdf')} title="Save Panel" />
+                    <CustomButton icon={saveIcon} className={`${!RoleManagementReducer?.singleRoleData?.data?.[0]?.permission && 'bg-lightGray'}`} titleClass={`${!RoleManagementReducer?.singleRoleData?.data?.[0]?.permission &&'text-black'}`} iconClass={`${!RoleManagementReducer?.singleRoleData?.data?.[0]?.permission &&'text-black'}`}  onClick={() => RoleManagementReducer?.singleRoleData?.data?.[0]?.permission ? onClickSavePanel() : console.log('dfdf')} title="Save Panel" />
                 </div>
             </div>
             <div className="flex gap-4">

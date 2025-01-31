@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import CustomButton from "../../../components/ui/forms/CustomButton";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store";
-import { plusIcon, trashBinIcon } from "../../../components/icons/icons";
 import { BodyDataApiResponse, BodyDataItem, permissions, setBodyData, setSingleRoleData } from "../../../features/rolemanagementreducer";
-import CustomSwitch from "../../../components/ui/forms/CustomSwitch";
-import { Active, deleteBodyData, InActive, searchBodyData, updateBodyData } from "../../../constants/constants";
+import { Active, searchBodyData } from "../../../constants/constants";
 import { ApiHit } from "../../../constants/Apihit";
 import { ObjIsEmpty } from "../../../utils/utils";
 import toast from "react-hot-toast";
@@ -31,79 +28,40 @@ const RoleBody = () => {
             }
         }
         ApiHit(json, searchBodyData).then((result) => {
-            const bodyData = result as BodyDataApiResponse; // Type assertion for 'data'
-            dispatch(setBodyData(bodyData)); // Dispatch the sidebarItems
+            const bodyData = result as BodyDataApiResponse;
+            dispatch(setBodyData(bodyData));
         })
             .catch((error) => {
-                console.error("API hit failed", error); // Handle errors
+                console.error("API hit failed", error);
             });
     }
 
-    const onDeleteComponent = (index: number, id: string) => {
-        const confirmation = window.confirm('Are you sure you want to delete this component?');
-        if (confirmation) {
-            var json = {
-                _id: id
-            }
-            ApiHit(json, deleteBodyData).then(result => {
-                if (result.statusCode === 204) {
-                    dispatch(setBodyData({}))
-                }
-            })
-        }
-    };
-
-    const onSwitch = (index: number, ele: BodyDataItem) => {
-        const confirmation = window.confirm(`Are you sure you want to ${ele.status === Active ? InActive : Active} component`);
-        if (confirmation) {
-            const updatedEle = {
-                _id: ele._id,
-                status: ele.status === Active ? InActive : Active
-            };
-            ApiHit(updatedEle, updateBodyData).then(result => {
-                if (result.statusCode === 200) {
-                    toast.success(ele.status === Active ? 'Component Has Activated' : 'Component Has Inactived')
-                    dispatch(setBodyData({}))
-                }
-            })
-        }
-    };
-
     const onCheckPermission = (key: keyof permissions, componentName: string) => {
-        const oldData = RoleManagementReducer?.singleRoleData;
-        if (oldData?.data?.[0]) {
-            const role = oldData.data[0];
-            if (role.permissions) {
-                const componentIndex = role.permissions[RoleManagementReducer?.activeScreenIndex].componentPermissions.findIndex(
-                    (p) => p.componentName === componentName
-                );
-                const componentPermissions = [...role.permissions[RoleManagementReducer?.activeScreenIndex].componentPermissions];
-                const permissions = { ...componentPermissions[componentIndex].permissions }; 
-                if (permissions[key] !== undefined) {
-                    permissions[key] = !permissions[key];
+        const roleData = RoleManagementReducer?.singleRoleData;
+        if (roleData.data && Array.isArray(roleData.data) && roleData.data[0]?.permission) {
+            const index = roleData.data[0].permission.findIndex((ele) => {
+                if (Array.isArray(ele.bodyDataId)) {
+                    return ele.bodyDataId.some((item) => item.componentName === componentName);
+                } else if (ele.bodyDataId) {
+                    return ele.bodyDataId.componentName === componentName;
                 }
-                componentPermissions[componentIndex] = {
-                    ...componentPermissions[componentIndex],
-                    permissions
-                };
-                const updatedRole = {
-                    ...role,
-                    permissions: [
-                        ...role.permissions.slice(0, RoleManagementReducer?.activeScreenIndex),
-                        {
-                            ...role.permissions[RoleManagementReducer?.activeScreenIndex],
-                            componentPermissions
-                        },
-                        ...role.permissions.slice(RoleManagementReducer?.activeScreenIndex + 1)
-                    ]
-                };
-                const updatedState = {
-                    ...oldData,
-                    data: [updatedRole]
-                };
-                dispatch(setSingleRoleData(updatedState));
+                return false;
+            });
+            if (index < 0) {
+                toast.error('Give sidebar menu permission first.');
+            } else {
+                const updatedRoleData = JSON.parse(JSON.stringify(roleData));
+                const updatedPermission = [...updatedRoleData.data[0].permission];
+                const permission = { ...updatedPermission[index] };
+                if (permission.bodyDataPermission) {
+                    permission.bodyDataPermission[key] = permission.bodyDataPermission[key] ? false : true;
+                }
+                updatedPermission[index] = permission;
+                updatedRoleData.data[0].permission = updatedPermission;
+                dispatch(setSingleRoleData(updatedRoleData));
             }
         }
+
     };
 
     return (
@@ -112,15 +70,25 @@ const RoleBody = () => {
                 {
                     RoleManagementReducer?.bodyData?.data?.map(
                         (ele: BodyDataItem, i: number) => {
-                            const rolePermission = RoleManagementReducer?.singleRoleData?.data?.[0]?.permissions?.find(
-                                (perm) => perm.componentPermissions.some((comp) => comp.componentName === ele.componentName)
-                            );
-                            const componentPermissions = rolePermission?.componentPermissions.find(
-                                (comp) => comp.componentName === ele.componentName
-                            );
-                            const writePermission = componentPermissions?.permissions?.write || false;
-                            const readPermission = componentPermissions?.permissions?.read || false;
-                            const deletePermission = componentPermissions?.permissions?.delete || false;
+                            const roleData = RoleManagementReducer?.singleRoleData;
+                            let permission;
+                            if (roleData?.data?.[0]?.permission) {
+                                const index = roleData.data[0].permission.findIndex((element) => {
+                                    if (Array.isArray(element.bodyDataId)) {
+                                        return element.bodyDataId.some((item) => item.componentName === ele.componentName);
+                                    } else if (element.bodyDataId) {
+                                        return element.bodyDataId.componentName === ele.componentName;
+                                    }
+                                    return false;
+                                });
+
+                                if (index >= 0) {
+                                    permission = roleData.data[0].permission[index];
+                                }
+                            }
+                            const writePermission = permission?.bodyDataPermission?.write ?? false;
+                            const readPermission = permission?.bodyDataPermission?.read ?? false;
+                            const deletePermission = permission?.bodyDataPermission?.delete ?? false;
                             return (
                                 ele.status === Active &&
                                 <div className="bg-darkGray rounded-lg h-44" key={i}>

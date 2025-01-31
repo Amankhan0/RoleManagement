@@ -8,23 +8,17 @@ export interface permissions {
 }
 
 export interface roleComponentPermission {
-  componentName: string;
-  status: string;
-  hits: string;
-  permissions: permissions;
-}
-
-export interface rolePermission {
-  screenName?: string;
-  status?: string;
-  componentPermissions:roleComponentPermission[]
+  bodyDataId?: BodyDataItem;
+  bodyDataPermission?: permissions;
+  applicationSidebarDataId?:sidebarItem;
+  status?:string;
 }
 
 export interface roleDataArr {
   roleName?: string,
   roleType?: string,
   status?: string,
-  permissions?: rolePermission[],
+  permission?: roleComponentPermission[],
   _id?: string
 }
 
@@ -48,8 +42,8 @@ export interface BodyDataItem {
   componentName?: string;
   status?: string;
   hits?: string;
-  permissions?: permissions;
-  usedById?: string;
+  permission?: permissions;
+  usedById?: sidebarItem;
   _id?: string
 }
 
@@ -81,7 +75,7 @@ export interface SideBarApiResponse {
 }
 
 // Define the Redux state structure
-interface FullRedux {
+export interface FullRedux {
   doc: roleApiResponse;
   sidebarData: SideBarApiResponse,
   singleRoleData: roleApiResponse,
