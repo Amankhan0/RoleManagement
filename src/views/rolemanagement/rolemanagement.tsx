@@ -2,18 +2,21 @@ import React, { useEffect, useState } from "react";
 import CustomTitle from "../../components/ui/title/CustomTitle";
 import CustomButton from "../../components/ui/forms/CustomButton";
 import CustomTable from "../../components/ui/table/CustomTable";
-import { addRole, clientPanel, InActive, searchRole, superAdminPanel, tableThClass } from "../../constants/constants";
+import { Active, addRole, clientPanel, deleteRole, InActive, searchRole, superAdminPanel, tableThClass, updateRole } from "../../constants/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store";
 import { ApiHit } from "../../constants/Apihit";
 import CustomModal from "../../components/ui/modal/modal";
 import CustomInput from "../../components/ui/forms/CustomInput";
-import { plusIcon, userIcon, usersIcon } from "../../components/icons/icons";
+import { editSmallTrashBinIcon, plusIcon, smallTrashBinIcon, userIcon, usersIcon } from "../../components/icons/icons";
 import { setApiJson, setApiJsonError } from "../../features/apireducer";
 import toast from "react-hot-toast";
 import { setRoleData } from "../../features/rolemanagementreducer";
-import { ObjIsEmpty } from "../../utils/utils";
+import { getFullYearWithTime, ObjIsEmpty } from "../../utils/utils";
 import { NavLink } from "react-router-dom";
+import CustomStatus from "../../components/ui/CustomStatus/CustomStatus";
+import CustomIconWithText from "../../components/ui/CustomStatus/CustomIconWithText";
+import CustomSwitch from "../../components/ui/forms/CustomSwitch";
 
 const RoleManagement = () => {
 
@@ -23,7 +26,7 @@ const RoleManagement = () => {
     const dispatch = useDispatch()
 
     const [modal, setModal] = useState(false)
-    var th = ['#', 'Name', 'Age', 'Staus', 'Action']
+    var th = ['S.No.', 'Full Name', 'Role Type', 'Staus', 'Last Modified Date, Time', 'Action']
 
     useEffect(() => {
         if (ObjIsEmpty(RoleManagementReducer?.doc)) {
@@ -50,14 +53,65 @@ const RoleManagement = () => {
     td = RoleManagementReducer?.doc?.data?.map((ele, index) => {
         return (
             <tr>
-                <th className={tableThClass}>{index + 1}</th>
+                <th className={tableThClass}><b>{index + 1}.</b></th>
                 <th className={tableThClass}>{ele.roleName}</th>
-                <th className={tableThClass}>{ele.roleType}</th>
-                <th className={tableThClass}>{ele.status}</th>
-                <th className={tableThClass}>{<NavLink to={'/addrole/'+ele?._id}>Give Permission</NavLink>}</th>
+                <th className={tableThClass}>
+                    <div className='flex gap-1 mt-2'>
+                        <i className="border rounded-lg p-1">{ele.roleType === superAdminPanel ? userIcon : usersIcon}</i>
+                        <p className="p-2">{ele.roleType}</p>
+                    </div>
+                </th>
+                <th className={tableThClass}>
+                    <div className='flex gap-2 items-center'>
+                        <CustomStatus title={ele.status} hightlight={ele.status === Active} hightlightTextColor="white" defaultTextColor="black" highlightBgColor="green" defaultBgColor="lightgray" />
+                        <CustomSwitch onSwitch={() => ele._id && ele.status && onRoleUpdateStatus(ele?._id, ele.status)} name="Data" checked={ele.status === 'Active' && true} />
+                    </div>
+                </th>
+                <th className={tableThClass}>
+                    {getFullYearWithTime(ele.updatedAt ? ele.updatedAt : "")}
+                </th>
+                <th className={tableThClass}>
+                    <div className='flex gap-2 items-center'>
+                        <NavLink to={'/addrole/' + ele?._id}>
+                            <CustomIconWithText icon={editSmallTrashBinIcon} title="Permission" />
+                        </NavLink>
+                        <CustomIconWithText onClick={() => ele._id && DeleteRole(ele?._id)} icon={smallTrashBinIcon} title="Delete" />
+                    </div>
+                </th>
             </tr>
         )
     })
+
+    const DeleteRole = (id: string) => {
+        var confirmation = window.confirm('Are you sure to delete role')
+        if (confirmation) {
+            var json = {
+                _id: id
+            }
+            ApiHit(json, deleteRole).then(res => {
+                if (res.statusCode === 200) {
+                    toast.success("Role deleted successfully")
+                    dispatch(setRoleData({}))
+                }
+            })
+        }
+    }
+
+    const onRoleUpdateStatus = (id: string, status: string) => {
+        var confirmation = window.confirm(`Are you sure to ${status} role`)
+        if (confirmation) {
+            var json = {
+                _id: id,
+                status: status === Active ? InActive : Active
+            }
+            ApiHit(json, updateRole).then(res => {
+                if (res.statusCode === 200) {
+                    toast.success("Status updated successfully")
+                    dispatch(setRoleData({}))
+                }
+            })
+        }
+    }
 
     const onChangeType = (type: string) => {
         const updatedJson = {
@@ -80,7 +134,7 @@ const RoleManagement = () => {
                 roleName: ApiReducer?.apiJson?.roleName,
                 roleType: ApiReducer?.apiJson?.roleType,
                 status: InActive,
-                permission:[]
+                permission: []
             }
             ApiHit(json, addRole).then(res => {
                 if (res?.statusCode === 201) {

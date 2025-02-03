@@ -18,6 +18,7 @@ export interface roleDataArr {
   roleName?: string,
   roleType?: string,
   status?: string,
+  updatedAt?: string,
   permission?: roleComponentPermission[],
   _id?: string
 }

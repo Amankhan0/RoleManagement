@@ -13,7 +13,7 @@ const CustomTable: React.FC<Props> = ({ th, td, totalPages,setDataNull }) => {
         <div>
             <table className="w-full">
                 <thead className="text-sm text-black">
-                    <tr className="rounded-lg bg-lightGray">
+                    <tr className="rounded-lg bg-lightGray text-left">
                         {th?.map((ele, i) => (
                             <th key={i} className={`${i === 0 ? 'rounded-l-lg' : i + 1 === th.length ? 'rounded-r-lg' : ''} p-2`}>{ele}</th>
                         ))}

@@ -18,7 +18,7 @@ export interface pagination {
 const initialState: pagination = {
    pagination:{
     page:1,
-    limit:1,
+    limit:10,
     search:{
 
     }
