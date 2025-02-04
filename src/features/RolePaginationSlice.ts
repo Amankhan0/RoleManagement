@@ -25,8 +25,8 @@ const initialState: pagination = {
    }
 };
 
-const PaginationReducer = createSlice({
-    name: 'ApiReducer',
+const RolePaginationReducer = createSlice({
+    name: 'RolePaginationReducer',
     initialState,
     reducers: {
         setPagination: (state, action: PayloadAction<paginationOBJ>) => {
@@ -35,6 +35,6 @@ const PaginationReducer = createSlice({
     },
 });
 
-export const { setPagination } = PaginationReducer.actions;
+export const { setPagination } = RolePaginationReducer.actions;
 
-export default PaginationReducer.reducer;
+export default RolePaginationReducer.reducer;

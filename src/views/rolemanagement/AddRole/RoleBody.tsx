@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "store";
-import { BodyDataApiResponse, BodyDataItem, permissions, setBodyData, setSingleRoleData } from "../../../features/rolemanagementreducer";
+import { BodyDataApiResponse, BodyDataItem, permissions, setBodyData, setSingleRoleData } from "../../../features/RoleSlice";
 import { Active, searchBodyData } from "../../../constants/constants";
 import { ApiHit } from "../../../constants/Apihit";
 import { ObjIsEmpty } from "../../../utils/utils";
@@ -10,7 +10,7 @@ import CustomTitle from "../../../components/ui/title/CustomTitle";
 
 const RoleBody = () => {
 
-    const RoleManagementReducer = useSelector((state: RootState) => state.RoleManagementReducer);
+    const RoleManagementReducer = useSelector((state: RootState) => state.RoleSlice);
     const dispatch = useDispatch()
 
     useEffect(() => {

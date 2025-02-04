@@ -9,21 +9,23 @@ import { ApiHit } from "../../constants/Apihit";
 import CustomModal from "../../components/ui/modal/modal";
 import CustomInput from "../../components/ui/forms/CustomInput";
 import { editSmallTrashBinIcon, plusIcon, smallTrashBinIcon, userIcon, usersIcon } from "../../components/icons/icons";
-import { setApiJson, setApiJsonError } from "../../features/apireducer";
+import { setApiJson, setApiJsonError } from "../../features/RoleApiSlice";
 import toast from "react-hot-toast";
-import { setRoleData } from "../../features/rolemanagementreducer";
+import { setRoleData } from "../../features/RoleSlice";
 import { getFullYearWithTime, ObjIsEmpty } from "../../utils/utils";
 import { NavLink } from "react-router-dom";
 import CustomStatus from "../../components/ui/CustomStatus/CustomStatus";
 import CustomIconWithText from "../../components/ui/CustomStatus/CustomIconWithText";
 import CustomSwitch from "../../components/ui/forms/CustomSwitch";
+import AddRole from "./AddRole/AddRole";
 
 const RoleManagement = () => {
 
-    const RoleManagementReducer = useSelector((state: RootState) => state.RoleManagementReducer);
-    const ApiReducer = useSelector((state: RootState) => state.ApiReducer);
-    const PaginationReducer = useSelector((state: RootState) => state.PaginationReducer);
+    const RoleManagementReducer = useSelector((state: RootState) => state.RoleSlice);
+    const ApiReducer = useSelector((state: RootState) => state.RoleApiSlice);
+    const PaginationReducer = useSelector((state: RootState) => state.RolePaginationSlice);
     const dispatch = useDispatch()
+    const [page,setPage] = useState('')
 
     const [modal, setModal] = useState(false)
     var th = ['S.No.', 'Full Name', 'Role Type', 'Staus', 'Last Modified Date, Time', 'Action']
@@ -72,9 +74,9 @@ const RoleManagement = () => {
                 </th>
                 <th className={tableThClass}>
                     <div className='flex gap-2 items-center'>
-                        <NavLink to={'/addrole/' + ele?._id}>
-                            <CustomIconWithText icon={editSmallTrashBinIcon} title="Permission" />
-                        </NavLink>
+                        {/* <NavLink to={'/addrole/' + ele?._id}> */}
+                            <CustomIconWithText onClick={()=>setPage(ele?._id+"")} icon={editSmallTrashBinIcon} title="Permission" />
+                        {/* </NavLink> */}
                         <CustomIconWithText onClick={() => ele._id && DeleteRole(ele?._id)} icon={smallTrashBinIcon} title="Delete" />
                     </div>
                 </th>
@@ -153,6 +155,9 @@ const RoleManagement = () => {
     }
 
     return (
+        page!==''?
+        <AddRole setPage={setPage} id={page}/>
+        :
         <div className="m-10">
             <div className="w-full bg-lightGray p-4 rounded-lg flex justify-between items-center">
                 <CustomTitle title="Role Management" />

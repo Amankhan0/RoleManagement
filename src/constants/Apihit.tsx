@@ -1,4 +1,4 @@
-import { SideBarApiResponse } from "features/rolemanagementreducer";
+import { SideBarApiResponse } from "features/RoleSlice";
 
 export function ApiHit(json: any, api: string): Promise<SideBarApiResponse> {
     return new Promise(function (resolve, reject) {

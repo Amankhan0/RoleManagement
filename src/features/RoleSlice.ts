@@ -94,8 +94,8 @@ const initialState: FullRedux = {
 };
 
 // Redux slice definition
-const RoleManagementReducer = createSlice({
-  name: 'RoleManagement',
+const RoleSlice = createSlice({
+  name: 'RoleSlice',
   initialState,
   reducers: {
     setRoleData: (state, action: PayloadAction<roleApiResponse>) => {
@@ -123,6 +123,6 @@ export const {
   setRoleSideBar,
   setActiveScreenIndex,
   setBodyData,
-} = RoleManagementReducer.actions;
+} = RoleSlice.actions;
 
-export default RoleManagementReducer.reducer;
+export default RoleSlice.reducer;

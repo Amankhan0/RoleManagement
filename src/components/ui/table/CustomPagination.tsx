@@ -3,7 +3,7 @@ import ReactPaginate from 'react-paginate';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'store';
 import { IoIosArrowBack, IoIosArrowForward } from 'react-icons/io';
-import { setPagination } from '../../../features/paginationreducer';
+import { setPagination } from '../../../features/RolePaginationSlice';
 
 interface Props {
     totalPages?: number;
@@ -12,7 +12,7 @@ interface Props {
 
 function CustomPagination({ totalPages,setDataNull }: Props) {
 
-    const PaginationReducer = useSelector((state: RootState) => state.PaginationReducer);
+    const PaginationReducer = useSelector((state: RootState) => state.RolePaginationSlice);
 
     const dispatch = useDispatch()
 

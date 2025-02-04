@@ -4,13 +4,13 @@ import { RootState } from "store";
 import { Active, InActive, searchApplicationSidebar, searchBodyData } from "../../../constants/constants";
 import { ObjIsEmpty } from "../../../utils/utils";
 import { ApiHit } from "../../../constants/Apihit";
-import { BodyDataApiResponse, roleComponentPermission, setRoleSideBar, setBodyData, setSingleRoleData, sidebarItem, setActiveScreenIndex } from "../../../features/rolemanagementreducer";
+import { BodyDataApiResponse, roleComponentPermission, setRoleSideBar, setBodyData, setSingleRoleData, sidebarItem, setActiveScreenIndex } from "../../../features/RoleSlice";
 import toast from "react-hot-toast";
 import CustomSwitch from "../../../components/ui/forms/CustomSwitch";
 
 const RoleSidebar = () => {
 
-    const RoleManagementReducer = useSelector((state: RootState) => state.RoleManagementReducer);
+    const RoleManagementReducer = useSelector((state: RootState) => state.RoleSlice);
 
     const dispatch = useDispatch()
 
@@ -59,17 +59,22 @@ const RoleSidebar = () => {
                     if (findIndex < 0) {
                         givePermission(ele, index, type, bodyData);
                     } else {
+
+                        
                         const permission = { ...permissions[findIndex] };
                         permission.status = permission?.status === Active ? InActive : Active;
 
-                        const updatedPermissions = [
-                            ...permissions.slice(0, findIndex),
-                            permission,
-                            ...permissions.slice(findIndex + 1),
-                        ];
+                        console.log('permission',permission);
+                        
 
-                        const updatedRoleData = { ...roleData.data[0], permission: updatedPermissions };
-                        dispatch(setSingleRoleData({ ...roleData, data: [updatedRoleData] }));
+                        // const updatedPermissions = [
+                        //     ...permissions.slice(0, findIndex),
+                        //     permission,
+                        //     ...permissions.slice(findIndex + 1),
+                        // ];
+
+                        // const updatedRoleData = { ...roleData.data[0], permission: updatedPermissions };
+                        // dispatch(setSingleRoleData({ ...roleData, data: [updatedRoleData] }));
                     }
                 }
             }
@@ -86,6 +91,9 @@ const RoleSidebar = () => {
             status: Active,
         })) || [];
 
+        console.log(permission);
+        
+        
         if (permission.length > 0) {
             const roleData = RoleManagementReducer?.singleRoleData;
             if (roleData.data) {

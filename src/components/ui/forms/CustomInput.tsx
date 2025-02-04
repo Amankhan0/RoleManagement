@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { errorInputClass, normalInputClass } from "../../../constants/constants";
-import { setApiJson } from "../../../features/apireducer";
+import { setApiJson } from "../../../features/RoleApiSlice";
 import cn from "../../../utils/class-names";
 
 interface props {
@@ -20,7 +20,7 @@ interface props {
 
 const CustomInput = ({ title, className, name, placeholder, onChange, id, style, type, titleClass, errorLabelClass }: props) => {
 
-  const ApiReducer = useSelector((state: RootState) => state.ApiReducer);
+  const ApiReducer = useSelector((state: RootState) => state.RoleApiSlice);
   const dispatch = useDispatch()
 
   const onTextChange = (value: string) => {
