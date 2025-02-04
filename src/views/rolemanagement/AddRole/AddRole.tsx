@@ -47,7 +47,6 @@ const AddRole = ({ id, setPage }: Props) => {
     const onClickSavePanel = () => {
         var id = RoleManagementReducer?.singleRoleData?.data?.[0]?._id
         var permission = RoleManagementReducer?.singleRoleData?.data?.[0]?.permission
-        console.log('RoleManagementReducer?.singleRoleData?.data?.[0]?.permission', RoleManagementReducer?.singleRoleData?.data?.[0]?.permission);
         var json = {
             _id: id,
             permission: permission

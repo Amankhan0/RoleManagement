@@ -7,9 +7,13 @@ export interface permissions {
   delete: boolean;
 }
 
-export interface roleComponentPermission {
+export interface bodyDataArr {
   bodyDataId?: BodyDataItem;
   bodyDataPermission?: permissions;
+}
+
+export interface roleComponentPermission {
+  bodyData:bodyDataArr[];
   applicationSidebarDataId?:sidebarItem;
   status?:string;
 }
@@ -81,7 +85,8 @@ export interface FullRedux {
   sidebarData: SideBarApiResponse,
   singleRoleData: roleApiResponse,
   activeScreenIndex: number,
-  bodyData: BodyDataApiResponse
+  bodyData: BodyDataApiResponse;
+  activeScreenName:string;
 }
 
 // Initial state with proper typing
@@ -90,6 +95,7 @@ const initialState: FullRedux = {
   singleRoleData: {},
   sidebarData: {},
   activeScreenIndex: 0,
+  activeScreenName: '',
   bodyData: {},
 };
 
@@ -113,6 +119,9 @@ const RoleSlice = createSlice({
     setBodyData: (state, action: PayloadAction<BodyDataApiResponse>) => {
       state.bodyData = action.payload;
     },
+    setActiveScreenName: (state, action: PayloadAction<string>) => {
+      state.activeScreenName = action.payload;
+    },
   },
 });
 
@@ -123,6 +132,7 @@ export const {
   setRoleSideBar,
   setActiveScreenIndex,
   setBodyData,
+  setActiveScreenName
 } = RoleSlice.actions;
 
 export default RoleSlice.reducer;
