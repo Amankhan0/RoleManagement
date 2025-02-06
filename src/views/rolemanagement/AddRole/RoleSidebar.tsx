@@ -55,7 +55,8 @@ const RoleSidebar = () => {
             const result = await ApiHit({ page: 1, limit: 10, search: { usedById: ele?._id } }, searchBodyData);
             const bodyData = result as BodyDataApiResponse;
             dispatch(setBodyData(bodyData));
-
+            console.log('bodyData',bodyData);
+            
             if(bodyData.data?.length !== 0){
                 if (result?.statusCode === 200) {
                     const roleData = RoleManagementReducer?.singleRoleData;
@@ -91,7 +92,7 @@ const RoleSidebar = () => {
                     }
                 }
             }else{
-                toast.error(`Component not found`);
+                alert('Component not found')
             }
             
         } catch (error) {
@@ -127,10 +128,11 @@ const RoleSidebar = () => {
                     }
                 }
             } else {
-                toast.error(`Component not found`);
+                alert('Component not found')
+                
             }
         }else{
-            toast.error(`Component not found`);
+            alert('Component not found')
         }
     };
 

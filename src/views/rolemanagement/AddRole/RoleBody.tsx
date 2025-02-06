@@ -78,7 +78,7 @@ const RoleBody = () => {
                     dispatch(setSingleRoleData(updatedRoleData));
                 }
             } else {
-                toast.error('Give sidebar menu permission first.');
+                alert('Give sidebar menu permission first.')
             }
         }
     };
