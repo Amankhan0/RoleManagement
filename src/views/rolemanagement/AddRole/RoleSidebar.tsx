@@ -178,6 +178,7 @@ const RoleSidebar = () => {
                         <CustomSwitch onSwitch={() => onSwitchAdvancePermission('userManagement')} name="userManagement" checked={ApiReducer?.apiJson?.userManagement === 'Active' ? true : false} />
                     </div>
                 </div>
+                
             }
             <div>
                 {RoleManagementReducer?.singleRoleData?.data?.[0]?.roleType === 'superAdmin' && <p className="font-bold underline m-3">Genral Features</p>}
