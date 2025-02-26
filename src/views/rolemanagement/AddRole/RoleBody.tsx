@@ -49,12 +49,10 @@ const RoleBody = () => {
             if (findPermissionScreenIndex !== undefined && findPermissionScreenIndex !== -1) {
                 const index = roleData?.data[0]?.permission[findPermissionScreenIndex]?.bodyData?.findIndex((element) => {
                     console.log(element);
-                    
                     return element.bodyDataId?.componentName === componentName;
                 });
                 console.log('index',index);
                 console.log('componentName',componentName);
-                
                 
                 if (index === undefined || index < 0) {
 
@@ -83,9 +81,7 @@ const RoleBody = () => {
         }
     };
 
-
     console.log('RoleManagementReducer---',RoleManagementReducer);
-
 
     return (
         <div className="w-[80%] bg-lightGray rounded-lg ml-5 p-5 shadow-lg">

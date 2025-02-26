@@ -13,9 +13,15 @@ export interface bodyDataArr {
 }
 
 export interface roleComponentPermission {
-  bodyData:bodyDataArr[];
-  applicationSidebarDataId?:sidebarItem;
-  status?:string;
+  bodyData: bodyDataArr[];
+  applicationSidebarDataId?: sidebarItem;
+  status?: string;
+}
+
+export interface advancePermission {
+  "applicationManagement": string,
+  "userManagement": string,
+  "roleManagement": string,
 }
 
 export interface roleDataArr {
@@ -24,6 +30,7 @@ export interface roleDataArr {
   status?: string,
   updatedAt?: string,
   permission?: roleComponentPermission[],
+  advancePermission?: advancePermission,
   _id?: string
 }
 
@@ -86,7 +93,7 @@ export interface FullRedux {
   singleRoleData: roleApiResponse,
   activeScreenIndex: number,
   bodyData: BodyDataApiResponse;
-  activeScreenName:string;
+  activeScreenName: string;
 }
 
 // Initial state with proper typing
