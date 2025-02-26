@@ -2,8 +2,8 @@
 // export const Base = 'http://192.168.1.5:8081/'
 // export const BaseUrl = 'http://192.168.1.5:8080/'
 
-export const Base = 'http://192.168.1.46:8081/'
-export const BaseUrl = 'http://192.168.1.46:8080/'
+export const Base = 'http://165.22.215.163:8081/'
+export const BaseUrl = 'http://165.22.215.163:8080/'
 
 const applicationManagement = 'applicationManagement/'
 const userservice = 'userservice/'
